@@ -1,0 +1,17 @@
+{
+    "proximo_id_vulnerabilidade": 4,
+    "ativos": {
+        "1": {
+            "hostname": "Pc - 001",
+            "responsavel": "Elaine",
+            "tipo": "PC",
+            "status": "EM_MANUTENCAO",
+            "vulnerabilidades": {
+                "2": {
+                    "severidade": "BAIXA",
+                    "status": "EM_TRATAMENTO"
+                }
+            }
+        }
+    }
+}
