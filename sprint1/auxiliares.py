@@ -1,4 +1,5 @@
-import sprint1.modelos as estado
+import modelos as estado
+
 
 def escolher_opcao(opcoes):
     while True:
@@ -36,7 +37,7 @@ def escolher_ativo_por_responsavel():
     ativos_responsavel = {}
 
     for id_ativo, ativo in estado.ativos.items():
-        if ativo["responsavel"] == responsavel:
+        if ativo.responsavel == responsavel:
             ativos_responsavel[id_ativo] = ativo
 
     if not ativos_responsavel:
@@ -46,7 +47,7 @@ def escolher_ativo_por_responsavel():
     print("\nATIVOS DO RESPONSÁVEL")
 
     for id_ativo, ativo in ativos_responsavel.items():
-        print(id_ativo, "-", ativo["hostname"])
+        print(id_ativo, "-", ativo.hostname)
 
     while True:
         try:

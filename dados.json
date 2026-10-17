@@ -1,13 +1,17 @@
 {
-    "proximo_id_vulnerabilidade": 4,
+    "proximo_id_vulnerabilidade": 12,
     "ativos": {
         "1": {
-            "hostname": "Pc - 001",
-            "responsavel": "Elaine",
+            "hostname": "1",
+            "responsavel": "Amanda",
             "tipo": "PC",
-            "status": "EM_MANUTENCAO",
+            "status": "INATIVO",
             "vulnerabilidades": {
-                "2": {
+                "9": {
+                    "severidade": "BAIXA",
+                    "status": "CORRIGIDA"
+                },
+                "11": {
                     "severidade": "BAIXA",
                     "status": "EM_TRATAMENTO"
                 }

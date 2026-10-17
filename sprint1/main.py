@@ -1,6 +1,12 @@
-from sprint1.ativos import cadastrar_ativo, consultar_ativos, atualizar_ativo, remover_ativo
-from sprint1.vulnerabilidades import gerenciamento_vulnerabilidades
-from sprint1.persistencia import salvar_dados, carregar_dados
+from ativos import (
+    cadastrar_ativo,
+    consultar_ativos,
+    atualizar_ativo,
+    remover_ativo,
+)
+from vulnerabilidades import gerenciamento_vulnerabilidades
+from persistencia import salvar_dados, carregar_dados
+
 
 def sair():
     salvar_dados()
@@ -49,9 +55,11 @@ def menu():
 
 # ============================================================
 
+
 def main():
     carregar_dados()
     menu()
+
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
-﻿import sprint1.modelos as estado
-from sprint1.modelos import Severidade, StatusTratamento
-from sprint1.auxiliares import escolher_enum, escolher_ativo_por_responsavel
+﻿import modelos as estado
+from modelos import Severidade, StatusTratamento
+from auxiliares import escolher_enum, escolher_ativo_por_responsavel
+
 
 def cadastrar_vulnerabilidade():
     id_ativo = escolher_ativo_por_responsavel()
@@ -13,18 +14,12 @@ def cadastrar_vulnerabilidade():
 
         status_tratamento = escolher_enum(StatusTratamento)
 
-        estado.ativos[id_ativo]["vulnerabilidades"][
+        estado.ativos[id_ativo].vulnerabilidades[
             estado.proximo_id_vulnerabilidade
-        ] = {
-            "severidade": severidade,
-            "status": status_tratamento
-        }
+        ] = {"severidade": severidade, "status": status_tratamento}
 
         print("Vulnerabilidade cadastrada com sucesso.")
-        print(
-            "ID da vulnerabilidade:",
-            estado.proximo_id_vulnerabilidade
-        )
+        print("ID da vulnerabilidade:", estado.proximo_id_vulnerabilidade)
 
         estado.proximo_id_vulnerabilidade += 1
 
@@ -51,13 +46,14 @@ def cadastrar_vulnerabilidade():
 
 # ============================================================
 
+
 def visualizar_vulnerabilidades():
     id_ativo = escolher_ativo_por_responsavel()
 
     if id_ativo is None:
         return
 
-    vulnerabilidades = estado.ativos[id_ativo]["vulnerabilidades"]
+    vulnerabilidades = estado.ativos[id_ativo].vulnerabilidades
 
     print("\nVULNERABILIDADES DO ATIVO")
 
@@ -67,17 +63,12 @@ def visualizar_vulnerabilidades():
 
     for id_vulnerabilidade, vulnerabilidade in vulnerabilidades.items():
         print("\nID:", id_vulnerabilidade)
-        print(
-            "Severidade:",
-            vulnerabilidade["severidade"].name
-        )
-        print(
-            "Status:",
-            vulnerabilidade["status"].name
-        )
+        print("Severidade:", vulnerabilidade["severidade"].name)
+        print("Status:", vulnerabilidade["status"].name)
 
 
 # ============================================================
+
 
 def atualizar_vulnerabilidade():
     id_ativo = escolher_ativo_por_responsavel()
@@ -85,7 +76,7 @@ def atualizar_vulnerabilidade():
     if id_ativo is None:
         return
 
-    vulnerabilidades = estado.ativos[id_ativo]["vulnerabilidades"]
+    vulnerabilidades = estado.ativos[id_ativo].vulnerabilidades
 
     if not vulnerabilidades:
         print("Este ativo não possui vulnerabilidades cadastradas.")
@@ -99,14 +90,12 @@ def atualizar_vulnerabilidade():
             "- Severidade:",
             vulnerabilidade["severidade"].name,
             "| Status:",
-            vulnerabilidade["status"].name
+            vulnerabilidade["status"].name,
         )
 
     while True:
         try:
-            id_vulnerabilidade = int(
-                input("Digite o ID da vulnerabilidade: ")
-            )
+            id_vulnerabilidade = int(input("Digite o ID da vulnerabilidade: "))
 
             if id_vulnerabilidade in vulnerabilidades:
                 break
@@ -131,9 +120,7 @@ def atualizar_vulnerabilidade():
                 nova_severidade = escolher_enum(Severidade)
 
                 if nova_severidade == vulnerabilidade["severidade"]:
-                    print(
-                        "A severidade selecionada já é a atual."
-                    )
+                    print("A severidade selecionada já é a atual.")
                 else:
                     vulnerabilidade["severidade"] = nova_severidade
                     print("Severidade alterada com sucesso.")
@@ -142,9 +129,7 @@ def atualizar_vulnerabilidade():
                 novo_status = escolher_enum(StatusTratamento)
 
                 if novo_status == vulnerabilidade["status"]:
-                    print(
-                        "O status selecionado já é o atual."
-                    )
+                    print("O status selecionado já é o atual.")
                 else:
                     vulnerabilidade["status"] = novo_status
                     print("Status alterado com sucesso.")
@@ -161,13 +146,14 @@ def atualizar_vulnerabilidade():
 
 # ============================================================
 
+
 def remover_vulnerabilidade():
     id_ativo = escolher_ativo_por_responsavel()
 
     if id_ativo is None:
         return
 
-    vulnerabilidades = estado.ativos[id_ativo]["vulnerabilidades"]
+    vulnerabilidades = estado.ativos[id_ativo].vulnerabilidades
 
     if not vulnerabilidades:
         print("Este ativo não possui vulnerabilidades cadastradas.")
@@ -181,14 +167,12 @@ def remover_vulnerabilidade():
             "- Severidade:",
             vulnerabilidade["severidade"].name,
             "| Status:",
-            vulnerabilidade["status"].name
+            vulnerabilidade["status"].name,
         )
 
     while True:
         try:
-            id_vulnerabilidade = int(
-                input("Digite o ID da vulnerabilidade: ")
-            )
+            id_vulnerabilidade = int(input("Digite o ID da vulnerabilidade: "))
 
             if id_vulnerabilidade in vulnerabilidades:
                 break
@@ -224,6 +208,7 @@ def remover_vulnerabilidade():
 
 
 # ============================================================
+
 
 def gerenciamento_vulnerabilidades():
     while True:

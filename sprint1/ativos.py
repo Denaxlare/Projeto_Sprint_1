@@ -1,6 +1,7 @@
-﻿import sprint1.modelos as estado
-from sprint1.modelos import TipoAtivo, StatusAtivo, Severidade, StatusTratamento
-from sprint1.auxiliares import escolher_opcao, escolher_enum, escolher_ativo_por_responsavel
+﻿import modelos as estado
+from modelos import TipoAtivo, StatusAtivo, Severidade, StatusTratamento
+from auxiliares import escolher_opcao, escolher_enum, escolher_ativo_por_responsavel
+
 
 def cadastrar_ativo():
     while True:
@@ -37,13 +38,13 @@ def cadastrar_ativo():
 
     vulnerabilidades = {}
 
-    estado.ativos[id_ativo] = {
-        "hostname": hostname,
-        "responsavel": responsavel,
-        "tipo": tipo_ativo,
-        "status": status,
-        "vulnerabilidades": vulnerabilidades
-    }
+    estado.ativos[id_ativo] = estado.Ativo(
+        id_ativo,
+        hostname,
+        responsavel,
+        tipo_ativo,
+        status,)
+         
 
     estado.ativos_por_hostname[hostname] = id_ativo
 
@@ -72,10 +73,9 @@ def cadastrar_ativo():
 
         status_tratamento = escolher_enum(StatusTratamento)
 
-        estado.ativos[id_ativo]["vulnerabilidades"][estado.proximo_id_vulnerabilidade] = {
-            "severidade": severidade,
-            "status": status_tratamento
-        }
+        estado.ativos[id_ativo].vulnerabilidades[
+            estado.proximo_id_vulnerabilidade
+        ] = {"severidade": severidade, "status": status_tratamento}
 
         print("Vulnerabilidade cadastrada com sucesso.")
 
@@ -111,6 +111,7 @@ def cadastrar_ativo():
 
 # ============================================================
 
+
 def consultar_por_id():
     while True:
         try:
@@ -121,14 +122,11 @@ def consultar_por_id():
 
                 print("\nATIVO ENCONTRADO")
                 print("ID:", id_ativo)
-                print("Hostname:", ativo["hostname"])
-                print("Responsável:", ativo["responsavel"])
-                print("Tipo:", ativo["tipo"].name)
-                print("Status:", ativo["status"].name)
-                print(
-                    "Quantidade de vulnerabilidades:",
-                    len(ativo["vulnerabilidades"])
-                )
+                print("Hostname:", ativo.hostname)
+                print("Responsável:", ativo.responsavel)
+                print("Tipo:", ativo.tipo.name)
+                print("Status:", ativo.status.name)
+                print("Quantidade de vulnerabilidades:", len(ativo.vulnerabilidades))
 
                 break
 
@@ -152,14 +150,11 @@ def consultar_por_hostname():
 
         print("\nATIVO ENCONTRADO")
         print("ID:", id_ativo)
-        print("Hostname:", ativo["hostname"])
-        print("Responsável:", ativo["responsavel"])
-        print("Tipo:", ativo["tipo"].name)
-        print("Status:", ativo["status"].name)
-        print(
-            "Quantidade de vulnerabilidades:",
-            len(ativo["vulnerabilidades"])
-        )
+        print("Hostname:", ativo.hostname)
+        print("Responsável:", ativo.responsavel)
+        print("Tipo:", ativo.tipo.name)
+        print("Status:", ativo.status.name)
+        print("Quantidade de vulnerabilidades:", len(ativo.vulnerabilidades))
 
         return
 
@@ -194,6 +189,7 @@ def consultar_ativos():
 
 # ============================================================
 
+
 def atualizar_ativo():
     while True:
         try:
@@ -220,24 +216,19 @@ def atualizar_ativo():
             if escolha == 1:
                 novo_responsavel = escolher_opcao(estado.responsaveis)
 
-                if novo_responsavel == ativo["responsavel"]:
-                    print(
-                        "O responsável selecionado já é o "
-                        "responsável atual."
-                    )
+                if novo_responsavel == ativo.responsavel:
+                    print("O responsável selecionado já é o " "responsável atual.")
                 else:
-                    ativo["responsavel"] = novo_responsavel
+                    ativo.responsavel = novo_responsavel
                     print("Responsável alterado com sucesso.")
 
             elif escolha == 2:
                 novo_status = escolher_enum(StatusAtivo)
 
-                if novo_status == ativo["status"]:
-                    print(
-                        "O status selecionado já é o status atual."
-                    )
+                if novo_status == ativo.status:
+                    print("O status selecionado já é o status atual.")
                 else:
-                    ativo["status"] = novo_status
+                    ativo.status = novo_status
                     print("Status alterado com sucesso.")
 
             elif escolha == 0:
@@ -252,6 +243,7 @@ def atualizar_ativo():
 
 # ============================================================
 
+
 def remover_ativo():
     while True:
         try:
@@ -261,8 +253,8 @@ def remover_ativo():
                 ativo = estado.ativos[id_ativo]
 
                 print("\nATIVO ENCONTRADO")
-                print("Hostname:", ativo["hostname"])
-                print("Responsável:", ativo["responsavel"])
+                print("Hostname:", ativo.hostname)
+                print("Responsável:", ativo.responsavel)
 
                 while True:
                     print("\nDeseja realmente excluir este ativo?")
@@ -273,7 +265,7 @@ def remover_ativo():
                         confirmacao = int(input("Digite a opção: "))
 
                         if confirmacao == 1:
-                            del estado.ativos_por_hostname[ativo["hostname"]]
+                            del estado.ativos_por_hostname[ativo.hostname]
                             del estado.ativos[id_ativo]
 
                             print("Ativo excluído com sucesso.")

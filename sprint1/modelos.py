@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class TipoAtivo(Enum):
     PC = 1
     IOT = 2
@@ -27,6 +28,22 @@ class StatusTratamento(Enum):
     CORRIGIDA = 3
     ACEITA_COMO_RISCO = 4
 
+
+class Ativo:
+    def __init__(
+        self,
+        id_ativo,
+        hostname,
+        responsavel,
+        tipo,
+        status=StatusAtivo.ATIVO
+    ):
+        self.id = id_ativo
+        self.hostname = hostname
+        self.responsavel = responsavel
+        self.tipo = tipo
+        self.status = status
+        self.vulnerabilidades = {}
 
 # ============================================================
 
