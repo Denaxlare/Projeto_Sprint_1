@@ -1,95 +1,70 @@
 ﻿import json
-import modelos as estado
-from modelos import TipoAtivo, StatusAtivo, Severidade, StatusTratamento
+
+from . import modelos as estado
+from .modelos import Ativo, Vulnerabilidade
+
+
+class PersistenciaJSON:
+    def __init__(self, repositorio, caminho="dados.json"):
+        self._repositorio = repositorio
+        self._caminho = caminho
+
+    def salvar(self):
+        dados = {
+            "proximo_id_vulnerabilidade": self._repositorio.proximo_id_vulnerabilidade,
+            "ativos": {},
+        }
+
+        for id_ativo, ativo in self._repositorio.ativos.items():
+            dados["ativos"][id_ativo] = ativo.to_dict()
+
+        with open(self._caminho, "w", encoding="utf-8") as arquivo:
+            json.dump(dados, arquivo, indent=4, ensure_ascii=False)
+
+        print("Dados salvos com sucesso.")
+
+    def carregar(self):
+        try:
+            with open(self._caminho, "r", encoding="utf-8") as arquivo:
+                dados = json.load(arquivo)
+        except FileNotFoundError:
+            self._repositorio.limpar()
+            return
+        except json.JSONDecodeError:
+            print("O arquivo de dados está inválido. Iniciando sem dados.")
+            self._repositorio.limpar()
+            return
+
+        if "proximo_id_vulnerabilidade" not in dados or "ativos" not in dados:
+            print("O arquivo de dados possui uma estrutura inválida.")
+            self._repositorio.limpar()
+            return
+
+        self._repositorio.limpar()
+
+        for id_ativo, ativo in dados["ativos"].items():
+            id_ativo = int(id_ativo)
+            objeto_ativo = Ativo.from_dict(id_ativo, ativo)
+            self._repositorio.cadastrar(objeto_ativo)
+
+            for id_vulnerabilidade, vulnerabilidade in ativo["vulnerabilidades"].items():
+                self._repositorio.restaurar_vulnerabilidade(
+                    id_ativo,
+                    int(id_vulnerabilidade),
+                    Vulnerabilidade.from_dict(vulnerabilidade),
+                )
+
+        self._repositorio.restaurar_proximo_id_vulnerabilidade(
+            dados["proximo_id_vulnerabilidade"]
+        )
+
+
+_persistencia_padrao = PersistenciaJSON(estado.repositorio_ativos)
 
 
 def salvar_dados():
-    dados = {
-        "proximo_id_vulnerabilidade": estado.proximo_id_vulnerabilidade,
-        "ativos": {},
-    }
-
-    for id_ativo, ativo in estado.ativos.items():
-        dados["ativos"][id_ativo] = {
-            "hostname": ativo.hostname,
-            "responsavel": ativo.responsavel,
-            "tipo": ativo.tipo.name,
-            "status": ativo.status.name,
-            "vulnerabilidades": {}
-        }
-
-        for id_vulnerabilidade, vulnerabilidade in ativo.vulnerabilidades.items():
-
-            dados["ativos"][id_ativo]["vulnerabilidades"][id_vulnerabilidade] = {
-                "severidade": vulnerabilidade["severidade"].name,
-                "status": vulnerabilidade["status"].name,
-            }
-
-    with open("dados.json", "w", encoding="utf-8") as arquivo:
-        json.dump(dados, arquivo, indent=4, ensure_ascii=False)
-
-    print("Dados salvos com sucesso.")
+    _persistencia_padrao.salvar()
 
 
 def carregar_dados():
-    try:
-        with open("dados.json", "r", encoding="utf-8") as arquivo:
-            dados = json.load(arquivo)
-
-    except FileNotFoundError:
-        estado.ativos = {}
-        estado.ativos_por_hostname = {}
-        estado.proximo_id_vulnerabilidade = 1
-        return
-
-    except json.JSONDecodeError:
-        print("O arquivo de dados está inválido. " "Iniciando sem dados.")
-
-        estado.ativos = {}
-        estado.ativos_por_hostname = {}
-        estado.proximo_id_vulnerabilidade = 1
-        return
-
-    if "proximo_id_vulnerabilidade" not in dados or "ativos" not in dados:
-        print("O arquivo de dados possui uma estrutura inválida.")
-
-        estado.ativos = {}
-        estado.ativos_por_hostname = {}
-        estado.proximo_id_vulnerabilidade = 1
-        return
-
-    estado.ativos = {}
-    estado.ativos_por_hostname = {}
-
-    estado.proximo_id_vulnerabilidade = dados["proximo_id_vulnerabilidade"]
-
-    for id_ativo, ativo in dados["ativos"].items():
-        id_ativo = int(id_ativo)
-
-        vulnerabilidades = {}
-
-        for id_vulnerabilidade, vulnerabilidade in ativo["vulnerabilidades"].items():
-
-            id_vulnerabilidade = int(id_vulnerabilidade)
-
-            vulnerabilidades[id_vulnerabilidade] = {
-                "severidade": Severidade[vulnerabilidade["severidade"]],
-                "status": StatusTratamento[vulnerabilidade["status"]],
-            }
-
-        objeto_ativo = estado.Ativo(
-            id_ativo,
-            ativo["hostname"],
-            ativo["responsavel"],
-            TipoAtivo[ativo["tipo"]],
-            StatusAtivo[ativo["status"]]
-        )
-
-        objeto_ativo.vulnerabilidades = vulnerabilidades
-
-        estado.ativos[id_ativo] = objeto_ativo
-            
-        estado.ativos_por_hostname[ativo["hostname"]] = id_ativo
-
-
-# ============================================================
+    _persistencia_padrao.carregar()
